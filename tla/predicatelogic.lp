@@ -1,7 +1,7 @@
 /********************************************************************
  An encoding of TLA+ predicate logic in LambdaPi. The primitive
- symbols are 
- - equality, 
+ symbols are
+ - equality,
  - true, false, and if-then-else for propositional logic,
  - and Hilbert's choice as the primitive binder.
 
@@ -56,7 +56,7 @@ constant symbol absurd : Π x, Prf false → Prf x;
 // equality is Boolean
 constant symbol eqBoolean : Π x y, (Prf (x = y) → Prf false) → Prf ((x = y) = false);
 // reduce provability of a conditional to provability of its branches
-constant symbol iteI : Π c t e p, 
+constant symbol iteI : Π c t e p,
                            (Prf c → Prf (p t))
                          → ((Prf c → Prf false) → Prf (p e))
                          → Prf (p (ite c t e));
@@ -155,6 +155,9 @@ constant symbol iff-def x y : Prf (iff x y = and (imp x y) (imp y x));
 symbol ≠ : U → U → U;
 notation ≠ infix 1;
 rule $x ≠ $y ↪ not ($x = $y);
+rule and $P true ↪ $P;
+rule and true $P ↪ $P;
+rule and $P $P ↪ $P;
 
 // Derived proof rules for propositional connectives.
 opaque symbol notTrue : Prf(not true = false) ≔
@@ -187,7 +190,7 @@ begin
     assume p q pnp pp;
     have pite: Prf (ite p false true)
     {  apply ssubst (not p) (ite p false true) (λ z, z) (not-def p) pnp  };
-    have f: Prf false 
+    have f: Prf false
     {  apply iteT p false true (λ z, z) pite pp  };
     apply absurd _ f
 end;
@@ -205,7 +208,7 @@ begin
     apply ssubst (ite c t e) e p _ pite;
     apply iteI c t e (λ u, u = e)
     { assume pc; apply notE c (t = e) pnc pc }
-    { assume _; apply refl e } 
+    { assume _; apply refl e }
 end;
 
 opaque symbol caseSplit p q : (Prf p → Prf q) → (Prf (not p) → Prf q) → Prf q ≔
@@ -233,7 +236,7 @@ begin
     assume p pp;
     apply notI (not p);
     assume pnp;
-    apply notE p false pnp pp 
+    apply notE p false pnp pp
 end;
 
 opaque symbol notnotD p : Prf (not (not p)) → Prf p ≔
@@ -268,7 +271,7 @@ begin
        {  apply iteT p (ite q true false) false (λ z, z) pite pp };
        apply caseSplit q r
        {  assume pq; apply pqr pp pq  }
-       {  assume pnq; 
+       {  assume pnq;
           have f: Prf false
           {  apply iteE q true false (λ z, z) qite pnq };
           apply absurd r f
@@ -312,8 +315,8 @@ begin
     apply subst (or p q) (ite p true (ite q true false)) (λ z, z) (or-def p q);
     apply iteI p true (ite q true false) (λ u, u)
     { assume _; apply trivial }
-    { assume _; 
-      refine iteI q true false (λ u, u) _ _ 
+    { assume _;
+      refine iteI q true false (λ u, u) _ _
       { assume _; apply trivial }
       { assume qf; apply qf pq }
     }
@@ -347,7 +350,7 @@ begin
     assume p q pq;
     apply subst (imp p q) (ite p (ite q true false) true) (λ z, z) (imp-def p q);
     apply iteI p (ite q true false) true (λ q, q)
-    { assume pp; 
+    { assume pp;
       apply iteI q true false (λ q, q)
       { assume _; apply trivial }
       { assume qf; apply qf (pq pp) }
@@ -425,9 +428,9 @@ end;
 */
 symbol choose : (U → U) → U;
 notation choose quantifier;
-constant symbol chooseI : 
+constant symbol chooseI :
     Π p x, Prf (p x) → Prf (p (choose p));
-constant symbol chooseDet : 
+constant symbol chooseDet :
     Π p q, (Π x, Prf (iff (p x) (q x))) → Prf (choose p = choose q);
 
 /* Existential and universal quantification are introduced as derived
@@ -495,4 +498,3 @@ end;
 // a useful instance of the above
 opaque symbol chooseEq p a : Prf (exists p) → (Π x, Prf (p x) → Prf(x = a)) → Prf (choose p = a) ≔
    chooseI2Ex p (λ x, x = a);
-

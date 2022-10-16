@@ -25,7 +25,7 @@ symbol setOfAll : U → (U → U) → U;
 symbol infinity : U;
 
 /*** Derived operators of set theory ***/
-/** 
+/**
   The axioms of set theory, given below, use some of these
   derived operators. This is of course inessential, as each
   operator could have been replaced by its definition, but it
@@ -36,7 +36,7 @@ symbol ∅ : U;
 constant symbol empty-def : Prf (∅ = subsetOf infinity (λ _, false));
 // unordered pairs {x,y} = { if z = ∅ then x else y : z ∈ subset (subset ∅) }
 symbol upair : U → U → U;
-constant symbol upair-def x y : 
+constant symbol upair-def x y :
   Prf (upair x y = setOfAll (subset (subset ∅)) (λ z, ite (z = ∅) x y));
 // binary set union
 symbol ∪ : U → U → U;
@@ -64,22 +64,22 @@ constant symbol memBoolean x y : (Prf (x ∈ y) → Prf false) → Prf ((x ∈ y
 // two sets are equal if they contamem the same elements
 constant symbol extensionality x y : (Π z, Prf (iff (z ∈ x) (z ∈ y))) → Prf (x = y);
 // z is a subset of x iff every element of z is an element of x
-constant symbol subset-def x z : 
+constant symbol subset-def x z :
   Prf (iff (z ∈ (subset x)) (`forall y, imp (y ∈ z) (y ∈ x)));
 // union x contains those elements that are contained in some set in x
-constant symbol union-def x z : 
+constant symbol union-def x z :
   Prf (iff (z ∈ (union x)) (`exists y, and (y ∈ x) (z ∈ y)));
 // { z \in x : p(z) }
-constant symbol subsetOf-def x p z : 
+constant symbol subsetOf-def x p z :
   Prf (iff (z ∈ (subsetOf x p)) (and (z ∈ x) (p z)));
 // { f(y) : y \in x }
-constant symbol setOfAll-def x f z : 
+constant symbol setOfAll-def x f z :
   Prf (iff (z ∈ setOfAll x f) (`exists y, and (y ∈ x) (z = f y)));
 // axioms about the infinity set
 constant symbol infinity_1 : Prf (∅ ∈ infinity);
 constant symbol infinity_2 x : Prf (x ∈ infinity) → Prf ((addElt x x) ∈ infinity);
 // foundation axiom: a set is either empty, or it contains some element that contains no element of x
-constant symbol foundation x y : 
+constant symbol foundation x y :
   Prf (y ∈ x) → Prf (bexists x (λ y, bforall y (λ z, (not ((z ∈ x))))));
 
 /*** More derived operators. ***/
@@ -347,13 +347,13 @@ begin
     apply extensionality (subsetOf ∅ p) ∅;
     assume z;
     apply iffI (z ∈ subsetOf ∅ p) (z ∈ ∅)
-    {  assume ins; 
+    {  assume ins;
        apply subsetOfE ∅ p z (z ∈ ∅) ins;
        assume ine _;
        apply ine
     }
-    {  assume ine; 
-       apply emptyE z _ ine 
+    {  assume ine;
+       apply emptyE z _ ine
     }
 end;
 
@@ -521,7 +521,7 @@ begin
        {  assume subempty;
           have abs: Prf (∅ ∈ ∅)
           {  apply ssubst (subset ∅) ∅ (λ u, ∅ ∈ u) subempty;
-             simplify; apply trivial 
+             simplify; apply trivial
           };
           apply emptyE ∅ _ abs
        }
@@ -535,7 +535,7 @@ begin
     assume x z;
     apply iffI (z ∈ upair x x) (z = x)
     {  assume zpr;
-       apply upairE x x z _ zpr 
+       apply upairE x x z _ zpr
        {  assume zx; apply zx  }
        {  assume zx; apply zx  }
     }
@@ -639,7 +639,7 @@ begin
        apply iffI (z ∈ s ∪ t) (z ∈ ∅)
        {  assume zinu;
           apply ∪E s t z _ zinu
-          {  assume zins; 
+          {  assume zins;
              apply andE (s = ∅) (t = ∅) _ rhs;
              assume semp _;
              apply ssubst s ∅ (λ y, z ∈ y) semp zins;
@@ -675,7 +675,7 @@ begin
     apply iffI ( z ∈ (s ∪ t) ∪ u) (z ∈ s ∪ (t ∪ u))
     {  assume inl;
        apply ∪E (s ∪ t) u z _ inl
-       {  assume inst; 
+       {  assume inst;
           apply ∪E s t z _ inst
           {  assume ins; apply ∪I1 s (t ∪ u) z ins  }
           {  assume int; apply ∪I2 s (t ∪ u) z; apply ∪I1 t u z int  }
@@ -685,7 +685,7 @@ begin
     {  assume inr;
        apply ∪E s (t ∪ u) z _ inr
        {  assume ins; apply ∪I1 (s ∪ t) u z; apply ∪I1 s t z ins  }
-       {  assume intu; 
+       {  assume intu;
           apply ∪E t u z _ intu
           {  assume int; apply ∪I1 (s ∪ t) u z; apply ∪I2 s t z int  }
           {  assume inu; apply ∪I2 (s ∪ t) u z inu  }
@@ -723,7 +723,7 @@ begin
     apply extensionality (s ∪ s) s;
     assume z;
     apply iffI (z ∈ s ∪ s) (z ∈ s)
-    {  assume lhs; 
+    {  assume lhs;
        apply ∪E s s z (z ∈ s) lhs
        {  assume ins; apply ins  }
        {  assume ins; apply ins  }
@@ -769,7 +769,7 @@ begin
     {  assume lhs;
        apply andI (p x) (bforall s p)
        {  apply bspec (addElt x s) p x lhs; apply addEltI1 x s  }
-       {  apply ballI s p; 
+       {  apply ballI s p;
           assume z zins;
           apply bspec (addElt x s) p z lhs;
           apply addEltI2 x s z zins;
@@ -882,8 +882,8 @@ begin
     {  assume rhs; apply ∩I s s z rhs rhs }
 end;
 
-rule $s ∩ ∅ ↪ ∅;
-rule ∅ ∩ $s ↪ ∅;
+rule _ ∩ ∅ ↪ ∅;
+rule ∅ ∩ _ ↪ ∅;
 rule $s ∩ $s ↪ $s;
 
 /** Theorems about set difference. **/
@@ -910,11 +910,11 @@ begin
     apply extensionality (s ∖ ∅) s;
     assume z;
     apply iffI (z ∈ s ∖ ∅) (z ∈ s)
-    {  assume lhs; 
+    {  assume lhs;
        apply ∖E s ∅ z _ lhs;
        assume ins _; apply ins
     }
-    {  assume ins; 
+    {  assume ins;
        apply ∖I s ∅ z ins;
        simplify; apply trivial
     }
@@ -948,7 +948,7 @@ begin
 end;
 
 rule $s ∖ ∅ ↪ $s;
-rule ∅ ∖ $s ↪ ∅;
+rule ∅ ∖ _ ↪ ∅;
 rule $s ∖ $s ↪ ∅;
 
 /** More facts about generalized set union. **/
@@ -1075,5 +1075,3 @@ begin
     assume x nins;
     apply nins
 end;
-
-
